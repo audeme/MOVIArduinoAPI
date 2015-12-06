@@ -1,0 +1,25 @@
+MOVI	KEYWORD1
+init	KEYWORD2
+isReady	KEYWORD2
+poll	KEYWORD2
+getResult	KEYWORD2
+say	KEYWORD2
+password	KEYWORD2
+ask	KEYWORD2
+addSentence	KEYWORD2
+train	KEYWORD2
+callSign	KEYWORD2
+setVolume	KEYWORD2
+setThreshold	KEYWORD2
+setVoiceGender	KEYWORD2
+responses	KEYWORD2
+welcomeMessage	KEYWORD2
+beeps	KEYWORD2
+getFirmwareVersion	KEYWORD2
+getHardwareVersion	KEYWORD2
+getAPIVersion	KEYWORD2
+stopDialog	KEYWORD2
+restartDialog	KEYWORD2
+factoryDefault	KEYWORD2
+sendCommand	KEYWORD2
+
