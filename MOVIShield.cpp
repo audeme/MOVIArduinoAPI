@@ -10,7 +10,7 @@
  ********************************************************************/
 
 #include "MOVIShield.h"
-#include <stream.h>
+#include <Stream.h>
 
 #if defined(ARDUINO) && ARDUINO >=100
 #include <Arduino.h>
