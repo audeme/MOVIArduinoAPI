@@ -123,7 +123,6 @@ void MOVI::init(bool waitformovi)
         hardwareversion=atof(ver.c_str());
         #endif
     }
-    
 }
 
 signed int MOVI::poll()
@@ -133,7 +132,7 @@ signed int MOVI::poll()
   
     int curchar;
     int eventno;
-    if (mySerial->available()) {
+    while (mySerial->available()) {
         curchar=mySerial->read();
         if (curchar=='\n') {
             if (debug) {
@@ -172,7 +171,7 @@ signed int MOVI::poll()
     }
 
     if (debug) {
-        if (Serial.available()) {
+        while (Serial.available()) {
              mySerial->write(Serial.read());
         }
     }
@@ -195,7 +194,7 @@ String MOVI::getShieldResponse()
     }
     while (shieldinit>0) {
         delay(10);
-        if (mySerial->available()) {
+        while (mySerial->available()) {
             curchar=mySerial->read();
             if (curchar=='\n') {
                 if (resp=="") continue;
