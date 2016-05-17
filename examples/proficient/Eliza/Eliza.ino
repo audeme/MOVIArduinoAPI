@@ -154,7 +154,7 @@ void setup() // setup Arduino and MOVI
   recognizer.welcomeMessage(false); // turn off welcome message -- no callsign needed. 
   recognizer.setThreshold(20);  // uncomment and set to a higher value (valid range 2-95) if you have a problems due to a noisy environment.
   recognizer.responses(false); // turn of automatic responses (so we can react).
-  recognizer.setVoiceGender(true); // Eliza is female
+  recognizer.setVoiceGender(FEMALE_VOICE); // Eliza is female
   recognizer.ask(F("Hello, my name is Eliza. Talk to me!"));
 }
 

@@ -39,7 +39,7 @@ void setup()
   recognizer.init();      // Initialize MOVI (waits for it to boot)
   recognizer.say("Hello, this is the default voice");
   delay(3000);
-  recognizer.setVoiceGender(true);
+  recognizer.setVoiceGender(FEMALE_VOICE);
   recognizer.say("Hello, this is the female voice");
   delay(3000);
   recognizer.setVolume(50);
