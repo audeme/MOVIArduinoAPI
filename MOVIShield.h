@@ -102,7 +102,7 @@
 #endif
 
 #ifndef API_VERSION
-#define API_VERSION 1.02f
+#define API_VERSION 1.03f
 #endif
 
 class MOVI
