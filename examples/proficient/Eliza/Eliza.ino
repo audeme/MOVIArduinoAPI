@@ -123,8 +123,8 @@ void setup() // setup Arduino and MOVI
   // More information about the F() function can be found here: https://www.arduino.cc/en/Tutorial/Memory
   recognizer.addSentence(F("Hi")); // Add sentence 1
   recognizer.addSentence(F("Hello")); // Add sentence 2
-  recognizer.addSentence(F("Hi Romeebo")); // Add sentence 3
-  recognizer.addSentence(F("Hello Romeebo")); // Add sentence 4
+  recognizer.addSentence(F("Hi Eliza")); // Add sentence 3
+  recognizer.addSentence(F("Hello Eliza")); // Add sentence 4
   recognizer.addSentence(F("How old are you"));  // Add sentence 5
   recognizer.addSentence(F("Whats your age"));  // Add sentence 6
   recognizer.addSentence(F("Whats your name"));  // Add sentence 7
