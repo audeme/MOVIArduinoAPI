@@ -116,10 +116,13 @@ public:
     MOVI();
     
     // Construct a MOVI object with optional serial monitor interaction.
-    MOVI(bool debugonoff);
+    MOVI(uint8_t debugonoff);
    
     // Construct a MOVI object with different communication pins and optional serial monitor interaction. This constructor only works on AVR architecture CPU (e.g Arduino Uno, Mega, Leonardo. NOT Due, Zero, Edison)
     MOVI(bool debugonoff, int rx, int tx);
+    
+    // Construct a MOVI object with an existing HardwareSerial (eg. Arduino Mega).
+    MOVI(HardwareSerial *hs);
     
     // init waits for MOVI to be booted and resets some settings. If the recognizer had been stopped with
     // stopDialog() it is restarted.
@@ -257,7 +260,9 @@ private:
     bool firstsentence;    // determines if addSentence() has been called
     void construct(int rx, int tx, bool debugonoff); // workaround for non-functioning constructor overloading
     String passstring;      // stores the passkey for a password() request
+    bool usehardwareserial; // flag to store if we are using AVR SoftwareSerial or HardwareSerial
 
+/*
 #ifdef ARDUINO_ARCH_AVR
     SoftwareSerial *mySerial; // serial communication line as SoftwareSerial for AVR CPUs (Uno, Mega, Leonardo,...)
 #elif defined ARDUINO_ARCH_SAM
@@ -267,6 +272,8 @@ private:
 #else
    #error This version of the MOVI API only supports boards with an AVR, SAM or Intel processor.
 #endif
+*/
+    Stream *mySerial;
     
     String response; // stores the stream of serial communication characters
     String result;   // stores the last result for getResult()

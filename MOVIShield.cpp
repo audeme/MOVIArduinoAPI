@@ -45,11 +45,13 @@
 
 MOVI::MOVI()
 {
+    usehardwareserial=false;
     construct(ARDUINO_RX_PIN, ARDUINO_TX_PIN, false);
 }
 
-MOVI::MOVI(bool debugonoff)
+MOVI::MOVI(uint8_t debugonoff)
 {
+    usehardwareserial=false;
     construct(ARDUINO_RX_PIN, ARDUINO_TX_PIN, debugonoff);
 }
 
@@ -58,9 +60,16 @@ MOVI::MOVI(bool debugonoff, int rx, int tx)
     #ifndef ARDUINO_ARCH_AVR
     #warning rx and tx parameters only supported in AVR architecture. Using Serial1 hardwired. 
     #endif
+    usehardwareserial=false;
     construct(rx, tx, debugonoff);
 }
 
+MOVI::MOVI(HardwareSerial *hs)
+{
+    usehardwareserial=true;
+    mySerial = hs;
+    construct(0, 0, false);
+}
 
 // Arduino's' C++ does not allow for constructor overloading!
 void inline MOVI::construct(int rx, int tx, bool debugonoff)
@@ -75,7 +84,9 @@ void inline MOVI::construct(int rx, int tx, bool debugonoff)
     callsigntrainok=true;
     
     #ifdef ARDUINO_ARCH_AVR
-        mySerial=new SoftwareSerial(rx, tx);
+        if (!usehardwareserial) {
+            mySerial=new SoftwareSerial(rx, tx);
+        }
     #else
         mySerial = &Serial1;
     #endif
@@ -95,7 +106,18 @@ void MOVI::init(bool waitformovi)
                 ; // wait for serial port to connect. Needed for Leonardo only
            }
         }
-        mySerial->begin(ARDUINO_BAUDRATE);
+       
+#ifdef ARDUINO_ARCH_AVR
+        if (usehardwareserial) ((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+        else ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+#elif defined ARDUINO_ARCH_SAM
+        ((USARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
+#elif defined __ARDUINO_X86__
+        ((TTYUARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
+#else
+   #error This version of the MOVI API only supports boards with an AVR, SAM or Intel processor.
+#endif
+
         shieldinit=1;
         while (waitformovi && !isReady()) {
             delay(10);
@@ -318,14 +340,14 @@ void MOVI::password(String question, String passkey)
 #ifdef F // check to see if F() macro is available
 void MOVI::ask(const __FlashStringHelper* question)
 {
-    say(question);
+    if (String(question).length() > 0) say(question);
     sendCommand(F("ASK"),F(""));
 }
 #endif
 
 void MOVI::ask(String question)
 {
-    say(question);
+    if (question.length() > 0) say(question);
     sendCommand("ASK","");
 }
 
@@ -424,7 +446,7 @@ bool MOVI::train()
 MOVI::~MOVI()
 {
 #ifdef ARDUINO_ARCH_AVR
-    if (NULL != mySerial)
+    if (NULL != mySerial && (!usehardwareserial))
     {
         delete mySerial;
     }
