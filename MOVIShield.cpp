@@ -49,7 +49,7 @@ MOVI::MOVI()
     construct(ARDUINO_RX_PIN, ARDUINO_TX_PIN, false);
 }
 
-MOVI::MOVI(uint8_t debugonoff)
+MOVI::MOVI(bool debugonoff)
 {
     usehardwareserial=false;
     construct(ARDUINO_RX_PIN, ARDUINO_TX_PIN, debugonoff);
@@ -64,11 +64,11 @@ MOVI::MOVI(bool debugonoff, int rx, int tx)
     construct(rx, tx, debugonoff);
 }
 
-MOVI::MOVI(HardwareSerial *hs)
+MOVI::MOVI(bool debugonoff, HardwareSerial *hs)
 {
     usehardwareserial=true;
     mySerial = hs;
-    construct(0, 0, false);
+    construct(0, 0, debugonoff);
 }
 
 // Arduino's' C++ does not allow for constructor overloading!
@@ -88,7 +88,10 @@ void inline MOVI::construct(int rx, int tx, bool debugonoff)
             mySerial=new SoftwareSerial(rx, tx);
         }
     #else
-        mySerial = &Serial1;
+        if (!usehardwareserial) {
+            usehardwareserial = true;
+            mySerial = &Serial1;
+        }
     #endif
 }
 
@@ -445,10 +448,8 @@ bool MOVI::train()
 
 MOVI::~MOVI()
 {
-#ifdef ARDUINO_ARCH_AVR
     if (NULL != mySerial && (!usehardwareserial))
     {
         delete mySerial;
     }
-#endif
 }
