@@ -74,10 +74,10 @@ void loop() // run over and over
     if (recognizer.getResult().indexOf(KEYWORD)>=0) { // if the raw result string contains the (uppercase) keyword string: bingo!
         recognizer.ask("keyword spotted");     // say keyword has been spotted
     } else {
-        recognizer.ask("");     // silently listen again
+        recognizer.ask();     // silently listen again
     }
   }
   if (res==SILENCE) { // Silence doesn't produce raw_words, so we need to have a case distinction
-          recognizer.ask("");     // silently listen again
+        recognizer.ask();     // silently listen again
   }
 }

@@ -102,7 +102,7 @@
 #endif
 
 #ifndef API_VERSION
-#define API_VERSION 1.04f
+#define API_VERSION 1.05f
 #endif
 
 class MOVI
@@ -190,14 +190,17 @@ public:
     // Makes MOVI speak the sentence given as parameter using the speech synthesizer.
     void say(String sentence);
     
+    // Directly listen without requiring a callsign.
+    void ask();
+
+    // Makes MOVI speak the sentence given as first parameter and then directly listen without requiring a
+    // callsign.
+    void ask(String question);
+    
     #ifdef F // check to see if F() macro is available
     // say using Flash memory (e.g., say(F("Hello World");)
     void say(const __FlashStringHelper* sentence);
     #endif
-    
-    // Makes MOVI speak the sentence given as first parameter and then directly listen without requiring a
-    // callsign.
-    void ask(String question);
     
     #ifdef F // check to see if F() macro is available
     // ask, Flash memory version (e.g., ask(F("How are you?");)

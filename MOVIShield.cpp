@@ -340,17 +340,26 @@ void MOVI::password(String question, String passkey)
     sendCommand("PASSWORD","");
 }
 
+
+void MOVI::ask(String question)
+{
+    // checking for empty string makes ask faster when there is no question, it's better to use ask() though
+    if (question.length() > 0) say(question);
+    sendCommand("ASK","");
+}
+
 #ifdef F // check to see if F() macro is available
 void MOVI::ask(const __FlashStringHelper* question)
 {
-    if (String(question).length() > 0) say(question);
+    // To check for empty string here, we need to copy the string into string memory. Bad idea.
+    say(question);
     sendCommand(F("ASK"),F(""));
 }
 #endif
 
-void MOVI::ask(String question)
+// this is a new ask method without passing a string.
+void MOVI::ask()
 {
-    if (question.length() > 0) say(question);
     sendCommand("ASK","");
 }
 
