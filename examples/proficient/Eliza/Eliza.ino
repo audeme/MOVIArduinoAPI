@@ -10,7 +10,7 @@
  ****************************************************************************
  *
  * This example implements a simple version of Eliza 
- * (see: https://en.wikipedia.org/wiki/ELIZA)
+ * (see: https://en.wikipedia.org/wiki/ELIZA )
  * It shows how to use MOVI in dialog mode and switch voices.
  * It also shows MOVI's capability of recognizing long sentences as well as
  * how to put a large amount of sentences into flash memory so that Arduino UNO's 
@@ -78,18 +78,18 @@ const char* const directResponses[] PROGMEM = {
 const char conversationStarters_0[] PROGMEM = "If you wrote a book, what would you name the main character and where would he go?";
 const char conversationStarters_1[] PROGMEM = "What is your favorite thing to do?"; 
 const char conversationStarters_2[] PROGMEM = "If you could design a t-shirt, what would you draw or write on it?";
-const char conversationStarters_3[] PROGMEM = "What was your favorite part of your day/school/activity?";
-const char conversationStarters_4[] PROGMEM = "What’s the funniest thing you saw today/this week?";
+const char conversationStarters_3[] PROGMEM = "What was your favorite part of your day?";
+const char conversationStarters_4[] PROGMEM = "What’s the funniest thing you saw this week?";
 const char conversationStarters_5[] PROGMEM = "How would you describe a perfect day for you?";
 const char conversationStarters_6[] PROGMEM = "If we had an airplane to take us on vacation right now, where would you want to go?";
 const char conversationStarters_7[] PROGMEM = "If we could go to your favorite place but couldn’t use a car to get there, how do you think we could get there?";
 const char conversationStarters_8[] PROGMEM = "If you could have any animal in the world as a pet, where would you go to get it and what would it be?";
-const char conversationStarters_9[] PROGMEM = "If you could do something just like your friend (use name of friend) what would you do?";
-const char conversationStarters_10[] PROGMEM = "If you could do something like your Dad/Mom do, what would you want to be able to do?";
+const char conversationStarters_9[] PROGMEM = "If you could do something just like your friend what would you do?";
+const char conversationStarters_10[] PROGMEM = "If you could do something like your Dad or Mom do, what would you want to be able to do?";
 const char conversationStarters_11[] PROGMEM = "If you could change anything about school what would it be?";
 const char conversationStarters_12[] PROGMEM = "If you could change anything about our family what would it be?";
 const char conversationStarters_13[] PROGMEM = "If you could change anything in the world, what would you change and how?";
-const char conversationStarters_14[] PROGMEM = "Who is your favorite tv/book/story character and what do you like about him/her?";
+const char conversationStarters_14[] PROGMEM = "Who is your favorite story character and what do you like about him or her?";
 const char conversationStarters_15[] PROGMEM = "If you could eat lunch with your favorite actor where would you go and what would you eat together?";
 const char conversationStarters_16[] PROGMEM = "If you could wake up tomorrow with a superpower, what superpower would you want to have?";
 const char conversationStarters_17[] PROGMEM = "If you could have any 3 wishes granted, what would they be?";
@@ -121,27 +121,27 @@ void setup() // setup Arduino and MOVI
   recognizer.callSign("ELIZA"); // Train callsign Arduino (may take 20 seconds)
 
   // More information about the F() function can be found here: https://www.arduino.cc/en/Tutorial/Memory
-  recognizer.addSentence(F("Hi")); // Add sentence 1
-  recognizer.addSentence(F("Hello")); // Add sentence 2
-  recognizer.addSentence(F("Hi Eliza")); // Add sentence 3
-  recognizer.addSentence(F("Hello Eliza")); // Add sentence 4
-  recognizer.addSentence(F("How old are you"));  // Add sentence 5
-  recognizer.addSentence(F("Whats your age"));  // Add sentence 6
-  recognizer.addSentence(F("Whats your name"));  // Add sentence 7
-  recognizer.addSentence(F("Thank you"));  // Add sentence 8
-  recognizer.addSentence(F("Where do you live"));  // Add sentence 9
-  recognizer.addSentence(F("What are you"));  // Add sentence 10
-  recognizer.addSentence(F("How are you"));  // Add sentence 11
-  recognizer.addSentence(F("Whats my name"));  // Add sentence 12
+  recognizer.addSentence(F("Hi"));                   // Add sentence 1
+  recognizer.addSentence(F("Hello"));                // Add sentence 2
+  recognizer.addSentence(F("Hi Eliza"));             // Add sentence 3
+  recognizer.addSentence(F("Hello Eliza"));          // Add sentence 4
+  recognizer.addSentence(F("How old are you"));      // Add sentence 5
+  recognizer.addSentence(F("Whats your age"));       // Add sentence 6
+  recognizer.addSentence(F("Whats your name"));      // Add sentence 7
+  recognizer.addSentence(F("Thank you"));            // Add sentence 8
+  recognizer.addSentence(F("Where do you live"));    // Add sentence 9
+  recognizer.addSentence(F("What are you"));         // Add sentence 10
+  recognizer.addSentence(F("How are you"));          // Add sentence 11
+  recognizer.addSentence(F("Whats my name"));        // Add sentence 12
   recognizer.addSentence(F("Whats your favorite color"));  // Add sentence 13
   recognizer.addSentence(F("Whats the meaning of life"));  // Add sentence 14
-  recognizer.addSentence(F("Whats your favorite food"));  // Add sentence 15
-  recognizer.addSentence(F("Are you a girl or a boy"));  // Add sentence 16
-  recognizer.addSentence(F("Whats your last name"));  // Add sentence 17
-  recognizer.addSentence(F("What time is it"));  // Add sentence 18
-  recognizer.addSentence(F("Whats two plus two"));  // Add sentence 19
-  recognizer.addSentence(F("Who made you"));  // Add sentence 20
-  recognizer.addSentence(F("bye bye"));  // Add sentence 21
+  recognizer.addSentence(F("Whats your favorite food"));   // Add sentence 15
+  recognizer.addSentence(F("Are you a girl or a boy"));    // Add sentence 16
+  recognizer.addSentence(F("Whats your last name"));       // Add sentence 17
+  recognizer.addSentence(F("What time is it"));            // Add sentence 18
+  recognizer.addSentence(F("Whats two plus two"));         // Add sentence 19
+  recognizer.addSentence(F("Who made you"));               // Add sentence 20
+  recognizer.addSentence(F("bye bye"));                    // Add sentence 21
  
   for (int i=0;i<26;i++) { // Add the conversation starters as sentences, to increase relevant vocabulary
       strcpy_P(buffer, (char*) pgm_read_word(&(conversationStarters[i])));
@@ -155,6 +155,9 @@ void setup() // setup Arduino and MOVI
   // recognizer.setThreshold(5);  // uncomment and set to a higher value (valid range 2-95) if you have a problems due to a noisy environment.
   recognizer.responses(false); // turn of automatic responses (so we can react).
   recognizer.setVoiceGender(FEMALE_VOICE); // Eliza is female
+  if (recognizer.getFirmwareVersion()>=1.1f) { // With 1.1 firmware, we can use the better synthesizer
+      recognizer.setSynthesizer(SYNTH_PICO);
+  }
   recognizer.ask(F("Hello, my name is Eliza. Talk to me!"));
 }
 

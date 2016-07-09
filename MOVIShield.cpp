@@ -24,6 +24,9 @@
 #include <SoftwareSerial.h>
 #endif
 
+#ifndef F // check to see if F() macro is missing -- should not be triggered but...
+#error MOVI 1.1 requires the F() macro.
+#endif
 
 // This is a workaround to not have the MOVI API give warning messages about the use of the F() function.
 // It is explained here: https://github.com/arduino/Arduino/issues/1793
@@ -106,7 +109,7 @@ void MOVI::init(bool waitformovi)
         if (debug) {
             Serial.begin(ARDUINO_BAUDRATE);
             while (!Serial) {
-                ; // wait for serial port to connect. Needed for Leonardo only
+                ; // wait for serial port to connect. Needed for Leonardo only.
            }
         }
        
@@ -125,8 +128,13 @@ void MOVI::init(bool waitformovi)
         while (waitformovi && !isReady()) {
             delay(10);
         }
-        mySerial->println("INIT");
-        String sresponse=getShieldResponse();
+        String sresponse="";
+        do {
+            mySerial->println(F("INIT"));
+            delay(10);
+            sresponse=getShieldResponse();
+        } while (sresponse.indexOf("@")==-1);
+            
         int s=sresponse.indexOf(": ");
         String ver=sresponse.substring(s+2);
         
@@ -144,7 +152,7 @@ void MOVI::init(bool waitformovi)
         char c2array[ver.length() + 1];
         ver.toCharArray(c2array, sizeof(c2array));
         hardwareversion = atof(c2array);
-        #else                    // AVR, SAm
+        #else                    // AVR, Sam
         hardwareversion=atof(ver.c_str());
         #endif
     }
@@ -218,7 +226,6 @@ String MOVI::getShieldResponse()
         return "";
     }
     while (shieldinit>0) {
-        delay(10);
         while (mySerial->available()) {
             curchar=mySerial->read();
             if (curchar=='\n') {
@@ -228,6 +235,7 @@ String MOVI::getShieldResponse()
                 resp+=(char) curchar;
             }
         }
+        delay(10);
     }
     return "";
 }
@@ -243,7 +251,6 @@ bool MOVI::sendCommand(String command, String parameter, String okresponse)
     } else return false;
 }
 
-#ifdef F // check to see if F() macro is available
 bool MOVI::sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter, String okresponse)
 {
     if (isReady()) {
@@ -257,23 +264,40 @@ bool MOVI::sendCommand(const __FlashStringHelper* command, const __FlashStringHe
         } else return false;
     } else return false;
 }
-#endif
-
 
 void MOVI::sendCommand(String command, String parameter)
 {
-    mySerial->println(command+" "+parameter+"\n");
+    if (firstsentence || intraining) sendCommand(command,parameter,"]"); // Use controlled sendcommand when used during initialization
+    else mySerial->println(command+" "+parameter+"\n");
 }
 
-#ifdef F // check to see if F() macro is available
+void MOVI::sendCommand(String command)
+{
+    if (firstsentence || intraining) sendCommand(command,"","]"); // Use controlled sendcommand when used during initialization
+    else mySerial->println(command+"\n");
+}
+
 void MOVI::sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter)
 {
-    mySerial->print(command);
-    mySerial->print(" ");
-    mySerial->print(parameter);
-    mySerial->println("\n");
+    if (firstsentence || intraining) {  // Use controlled sendcommand when used during initialization
+        sendCommand(command,parameter,"]");
+    } else {
+        mySerial->print(command);
+        mySerial->print(" ");
+        mySerial->print(parameter);
+        mySerial->println("\n");
+    }
 }
-#endif
+
+void MOVI::sendCommand(const __FlashStringHelper* command)
+{
+    if (firstsentence || intraining) { // Use controlled sendcommand when used during initialization
+        sendCommand(command,F(""),"]");
+    } else {
+        mySerial->print(command);
+        mySerial->println("\n");
+    }
+}
 
 bool MOVI::isReady()
 {
@@ -283,7 +307,7 @@ bool MOVI::isReady()
     if (shieldinit==0) {
         init();
     }
-    mySerial->println("PING\n");
+    mySerial->println(F("PING\n"));
     if (getShieldResponse().indexOf("PONG")) {
         shieldinit=100;
         return true;
@@ -294,33 +318,72 @@ bool MOVI::isReady()
 
 void MOVI::factoryDefault()
 {
-    sendCommand("FACTORY","");
+    sendCommand(F("FACTORY"));
 }
 
 void MOVI::stopDialog()
 {
-    sendCommand("STOP","");
+    sendCommand(F("STOP"));
 }
 
 void MOVI::restartDialog()
 {
-    sendCommand("RESTART","");
+    sendCommand(F("RESTART"));
 }
 
-#ifdef F // check to see if F() macro is available
 void MOVI::say(const __FlashStringHelper* sentence)
 {
     sendCommand(F("SAY"),sentence);
 }
-#endif
 
 void MOVI::say(String sentence)
 {
     sendCommand("SAY",sentence);
 }
 
+void MOVI::pause()
+{
+    sendCommand(F("PAUSE"));
+}
 
-#ifdef F // check to see if F() macro is available
+void MOVI::unpause()
+{
+    sendCommand(F("UNPAUSE"));
+}
+
+void MOVI::finish()
+{
+    sendCommand(F("FINISH"));
+}
+
+void MOVI::play(String filename)
+{
+    sendCommand("PLAY",filename);
+}
+
+void MOVI::abort()
+{
+    sendCommand(F("ABORT"),F(""));
+}
+
+void MOVI::setSynthesizer(int synth)
+{
+    if (synth==SYNTH_PICO) {
+        sendCommand(F("SETSYNTH"),F("PICO"));
+    } else {
+        sendCommand(F("SETSYNTH"),F("ESPEAK"));
+    }
+}
+
+void MOVI::setSynthesizer(int synth, String commandline)
+{
+    if (synth==SYNTH_PICO) {
+            sendCommand("SETSYNTH","PICO "+commandline);
+    } else {
+            sendCommand("SETSYNTH","ESPEAK "+commandline);
+    }
+}
+
 void MOVI::password(const __FlashStringHelper* question, String passkey)
 {
     passstring=String(passkey);
@@ -329,7 +392,6 @@ void MOVI::password(const __FlashStringHelper* question, String passkey)
     say(question);
     sendCommand(F("PASSWORD"),F(""));
 }
-#endif
 
 void MOVI::password(String question, String passkey)
 {
@@ -337,7 +399,7 @@ void MOVI::password(String question, String passkey)
     passstring.toUpperCase();
     passstring.trim();
     say(question);
-    sendCommand("PASSWORD","");
+    sendCommand(F("PASSWORD"));
 }
 
 
@@ -345,22 +407,20 @@ void MOVI::ask(String question)
 {
     // checking for empty string makes ask faster when there is no question, it's better to use ask() though
     if (question.length() > 0) say(question);
-    sendCommand("ASK","");
+    sendCommand(F("ASK"));
 }
 
-#ifdef F // check to see if F() macro is available
 void MOVI::ask(const __FlashStringHelper* question)
 {
     // To check for empty string here, we need to copy the string into string memory. Bad idea.
     say(question);
-    sendCommand(F("ASK"),F(""));
+    sendCommand(F("ASK"));
 }
-#endif
 
 // this is a new ask method without passing a string.
 void MOVI::ask()
 {
-    sendCommand("ASK","");
+    sendCommand(F("ASK"));
 }
 
 void MOVI::callSign(String callsign)
@@ -392,8 +452,8 @@ void MOVI::beeps(bool on)
 
 void MOVI::setVoiceGender(bool female)
 {
-    if (female) sendCommand("FEMALE","");
-    else sendCommand("MALE","");
+    if (female) sendCommand(F("FEMALE"));
+    else sendCommand(F("MALE"));
 }
 
 void MOVI::setVolume(int volume)
@@ -421,7 +481,6 @@ float MOVI::getHardwareVersion()
     return hardwareversion;
 }
 
-#ifdef F // check to see if F() macro is available
 bool MOVI::addSentence(const __FlashStringHelper* sentence)
 {
     if (firstsentence) {
@@ -432,8 +491,6 @@ bool MOVI::addSentence(const __FlashStringHelper* sentence)
     intraining=sendCommand(F("ADDSENTENCE"),sentence,"211");
     return intraining;
 }
-#endif
-
 
 bool MOVI::addSentence(String sentence)
 {

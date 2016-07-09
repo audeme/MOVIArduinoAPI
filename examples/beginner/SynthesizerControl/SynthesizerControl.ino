@@ -9,12 +9,23 @@
  * BSD license, all text above must be included in any redistribution.      *
  ****************************************************************************
  *
- * This basic example shows how to control MOVI(tm)'s synthesizer. In this 
- * example we use no speech recognition.
+ * This basic example shows how to control MOVI(tm)'s speech synthesizer. In this 
+ * example we use no speech recognition. 
  *
+ * As of MOVI firmware 1.1, two synthesizers are available: espeak and SVOX PICO.
+ * Furthermore, both synthesizers can be configured via their command line 
+ * parameters using MOVI's setSynthesizer() command.
+ *
+ * SVOX Pico is smoother than espeak but is only available as female voice and the only 
+ * parameter to tune is the language spoken. See also: http://topics-of-interest.com/man1/pico2wave
+ * The languages available are 'en-US', 'en-GB' (default), 'de-DE', 'es-ES', 'fr-FR', and 'it-IT'. 
+ *
+ * Espeak (the default synthesizer) allows for a lot more configuration. See:
+ * http://espeak.sourceforge.net/commands.html 
+ *
+ * The code below shows several useful example. 
  *
  * Circuitry:
- * LED is pin D13 and GND
  * Arduino UNO R3, MEGA2560 R3, or Arduino Leonardo R3.
  * Connect speaker to MOVI.
  * IMPORTANT: Always use external power supply with MOVI. 
@@ -22,8 +33,6 @@
  * Other Arduino-compatible boards:  
  * Consult MOVI's User Manual before connecting MOVI.
  *
- * If you long-press the button on the MOVI (for a couple seconds), 
- * MOVI will revert back to the call sign and sentences trained here.
  */
 
 #include "MOVIShield.h"     // Include MOVI library, needs to be *before* the next #include
@@ -37,22 +46,61 @@ MOVI recognizer(true);            // Get a MOVI object, true enables serial moni
 void setup()  
 {
   recognizer.init();      // Initialize MOVI (waits for it to boot)
-  recognizer.say("Hello, this is the default voice");
+  recognizer.say(F("Hello, this is the default voice"));
   delay(3000);
+  
   recognizer.setVoiceGender(FEMALE_VOICE);
-  recognizer.say("Hello, this is the female voice");
+  recognizer.say(F("Hello, this is the female voice"));
   delay(3000);
+  
+  if (recognizer.getFirmwareVersion()>=1.1f) { // Firmware 1.1 has more features!
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK,"-v+whisper");
+    recognizer.say(F("Do not tell anybody that MOVI can whisper now!"));
+    delay(3000);
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK,"-v+croak");
+    recognizer.say(F("MOVI can creep you out too!"));
+    delay(3000);
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK,"-p85 -vf4");
+    recognizer.say(F("Or speak like a child!"));
+    delay(3000);
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK,"-s 300");
+    recognizer.say(F("or extremely fast: 1 2 3 4 5..."));
+    delay(3500);
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK,"-s 80");
+    recognizer.say(F("or very slow: 1 2 3 4 5..."));
+    delay(8000);
+    
+    recognizer.setSynthesizer(SYNTH_PICO);
+    recognizer.say(F("As of firmware 1.1, I am the additional female voice."));
+    delay(3000);
+    
+    recognizer.setSynthesizer(SYNTH_PICO,"-l=en-US");
+    recognizer.say(F("Fancy an American accent?"));
+    delay(3000);
+    
+    recognizer.setSynthesizer(SYNTH_PICO,"-l=es-ES");
+    recognizer.say(F("Y puedo hablar castellano."));
+    delay(4000);
+    
+    recognizer.setSynthesizer(SYNTH_ESPEAK);
+  }  
+  
   recognizer.setVolume(50);
-  recognizer.say("50 percent volume.");
+  recognizer.say(F("50 percent volume."));
   delay(3000);
   recognizer.setVolume(25);
-  recognizer.say("25 percent volume.");
+  recognizer.say(F("25 percent volume."));
   delay(3000);
   recognizer.setVolume(0);
-  recognizer.say("0 percent volume.");
+  recognizer.say(F("0 percent volume."));
 }
 
 void loop() // run over and over
 {
-  // do nothing.
+ // do nothing
 }

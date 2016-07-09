@@ -37,7 +37,15 @@
 #endif
 
 #ifndef ARDUINO_BAUDRATE
-#define ARDUINO_BAUDRATE 9600  //  communication rate between MOVI and Arduino. 9600bps is good.
+#define ARDUINO_BAUDRATE 9600  // Communication rate between MOVI and Arduino. 9600bps is max for software serial ports.
+#endif                         // As of firmware 1.1 changing the bitrate is possible with a config file on the SDcard.
+
+#ifndef SYNTH_ESPEAK
+#define SYNTH_ESPEAK 0  //  Constant for setSynthesizer method
+#endif
+
+#ifndef SYNTH_PICO
+#define SYNTH_PICO 1  //  Constant for setSynthesizer method
 #endif
 
 
@@ -102,7 +110,7 @@
 #endif
 
 #ifndef API_VERSION
-#define API_VERSION 1.05f
+#define API_VERSION 1.10f
 #endif
 
 class MOVI
@@ -139,10 +147,8 @@ public:
     // not matter.
     bool addSentence(String sentence);
     
-    #ifdef F // check to see if F() macro is available
     // addsentence using Flash memory (e.g., addsentence(F("Light On");)
     bool addSentence(const __FlashStringHelper* sentence);
-    #endif
     
     // This method checks if the training set contains new sentences since the last training. If so, it trains all
     // sentences added in this MOVI instance. Once training is performed, no more sentences can be added
@@ -197,15 +203,12 @@ public:
     // callsign.
     void ask(String question);
     
-    #ifdef F // check to see if F() macro is available
     // say using Flash memory (e.g., say(F("Hello World");)
     void say(const __FlashStringHelper* sentence);
-    #endif
-    
-    #ifdef F // check to see if F() macro is available
+
     // ask, Flash memory version (e.g., ask(F("How are you?");)
     void ask(const __FlashStringHelper* question);
-    #endif
+ 
     
     // Makes MOVI speak the sentence given as first parameter. Then MOVI's password function is used to query for
     // a password. The API comapres the passkey with the password and return either PASSWORD_REJECT or
@@ -214,20 +217,40 @@ public:
     // and must not contain digits or other non-letter characters except one space between the words.
     void password(String question, String passkey);
     
-    #ifdef F // check to see if F() macro is available
     // password, Flash memory version (e.g., ask(F("Password please",password);)
     void password(const __FlashStringHelper* question, String passkey);
-    #endif
     
     // --- Infrequently used advanced commands ---
  
-    // Sends a command manually to MOVI.
+    // Pauses the recognizer until the an upause(), ask(), say() or password() command.
+    void pause();
+    
+    // Silently interrupts a pause. See pause()
+    void unpause();
+    
+    // Finishes up the currently executing sentence recognition.
+    void finish();
+    
+    // Play an audio file (wave format) located on the update partition of the SDcard.
+    void play(String filename);
+    
+    // Aborts a play or say command immediately
+    void abort();
+    
+    // Sets MOVI's synthesizer to one of SYNTH_ESPEAK or SYNTH_PICO.
+    void setSynthesizer(int synth);
+    
+    // Sets MOVI's synthesizer to one of SYNTH_ESPEAK or SYNTH_PICO with given command line parameters.
+    void setSynthesizer(int synth, String commandline);
+    
+    // Sends a command manually to MOVI, without argument.
+    void sendCommand(String command);
+    
+    // Sends a command manually to MOVI, with arguments.
     void sendCommand(String command, String parameter);
     
-    #ifdef F // check to see if F() macro is available
     // Sends a command manually to MOVI. Flash memory version for AVR
     void sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter);
-    #endif
     
     // Returns MOVI's firmware version.
     float getFirmwareVersion();
@@ -270,13 +293,12 @@ private:
     String response; // stores the stream of serial communication characters
     String result;   // stores the last result for getResult()
     String getShieldResponse(); // used to communicate with the shield before poll()
+    
     bool sendCommand(String command, String parameter, String okresponse); // sends a command and listens to responses. Only works before poll().
-    
-    #ifdef F // check to see if F() macro is available
-    // Same as above, except Flash memory version
+
+    // Sends a command manually to MOVI. Flash memory version for AVR
+    void sendCommand(const __FlashStringHelper* command);
     bool sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter, String okresponse);
-    #endif
-    
 };
 
 
