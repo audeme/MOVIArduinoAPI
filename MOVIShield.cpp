@@ -114,8 +114,7 @@ void MOVI::init(bool waitformovi)
         }
        
 #ifdef ARDUINO_ARCH_AVR
-        if (usehardwareserial) ((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
-        else ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+        if (!usehardwareserial) ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined ARDUINO_ARCH_SAM
         ((USARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined __ARDUINO_X86__

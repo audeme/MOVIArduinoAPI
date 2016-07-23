@@ -38,7 +38,8 @@
 
 #ifndef ARDUINO_BAUDRATE
 #define ARDUINO_BAUDRATE 9600  // Communication rate between MOVI and Arduino. 9600bps is max for software serial ports.
-#endif                         // As of firmware 1.1 changing the bitrate is possible with a config file on the SDcard.
+#endif                         // As of firmware 1.1 changing the bitrate is possible with a config file on the SDcard but
+                               // then HardwareSerial must be used and initialized before constructing MOVI.
 
 #ifndef SYNTH_ESPEAK
 #define SYNTH_ESPEAK 0  //  Constant for setSynthesizer method
@@ -129,7 +130,8 @@ public:
     // Construct a MOVI object with different communication pins and optional serial monitor interaction. This constructor only works on AVR architecture CPU (e.g Arduino Uno, Mega, Leonardo. NOT Due, Zero, Edison)
     MOVI(bool debugonoff, int rx, int tx);
     
-    // Construct a MOVI object with an existing HardwareSerial (eg. Arduino Mega).
+    // Construct a MOVI object with an existing HardwareSerial (eg. Arduino Mega). If you use this constructor, you need to
+    // calls hs.begin(<bitrate>) before calling init.
     MOVI(bool debugonoff, HardwareSerial *hs);
     
     // init waits for MOVI to be booted and resets some settings. If the recognizer had been stopped with
