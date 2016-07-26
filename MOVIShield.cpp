@@ -170,7 +170,7 @@ signed int MOVI::poll()
             if (debug) {
                 Serial.println(response);
             }
-            if (response.indexOf("MOVIEvent[")>=0) {
+            if (response.lastIndexOf("MOVIEvent[")>=0) { // Dylan-suggested fix that makes sure buffer junk is not interpreted
                 eventno=response.substring(response.indexOf("[")+1,response.indexOf("]:")).toInt();
                 result=response.substring(response.indexOf(" ")+1);
                 if (eventno<100) { // then it's a user-read-only event
