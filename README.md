@@ -23,3 +23,7 @@ Fixed bug in ask(F(<string>)) method that would copy the flashed string back to 
 Library uses less String memory
 Added features for 1.10 Firmware update
 More examples
+
+#Version 1.11
+Play() command with Flash memory parameter
+Arduino Zero (SAMD architectures) now enabled

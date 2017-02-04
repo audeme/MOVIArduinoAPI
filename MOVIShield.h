@@ -20,7 +20,7 @@
 #elif defined __ARDUINO_X86__  // Intel Edison, Intel Galileo
 // Will user Serial1 later
 #elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
-// Not supported right now
+// Will user Serial1 later
 #else                          // Old versions of the Arduino IDE that doesn't have ARCH destinctions yet.
 #include <SoftwareSerial.h>  
 #define ARDUINO_ARCH_AVR      // Assume AVR
@@ -111,7 +111,7 @@
 #endif
 
 #ifndef API_VERSION
-#define API_VERSION 1.10f
+#define API_VERSION 1.11f
 #endif
 
 class MOVI
@@ -235,6 +235,9 @@ public:
     
     // Play an audio file (wave format) located on the update partition of the SDcard.
     void play(String filename);
+    
+    // Play an audio file (wave format) located on the update partition of the SDcard, Flash memory version.
+    void play(const __FlashStringHelper* filename);
     
     // Aborts a play or say command immediately
     void abort();

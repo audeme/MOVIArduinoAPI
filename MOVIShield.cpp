@@ -117,10 +117,12 @@ void MOVI::init(bool waitformovi)
         if (!usehardwareserial) ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined ARDUINO_ARCH_SAM
         ((USARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
-#elif defined __ARDUINO_X86__
+#elif defined __ARDUINO_X86__    // Intel Edison, etc.
         ((TTYUARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
+#elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
+		((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #else
-   #error This version of the MOVI API only supports boards with an AVR, SAM or Intel processor.
+   #error This version of the MOVI library only supports boards with an AVR, SAM, SAMD or Intel processor.
 #endif
 
         shieldinit=1;
@@ -358,6 +360,11 @@ void MOVI::finish()
 void MOVI::play(String filename)
 {
     sendCommand("PLAY",filename);
+}
+
+void MOVI::play(const __FlashStringHelper* filename)
+{
+	sendCommand(F("PLAY"),filename);
 }
 
 void MOVI::abort()
