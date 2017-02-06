@@ -31,20 +31,6 @@
  * 
  */
 
-// Check for architecture
-#ifdef ARDUINO_ARCH_AVR // Arduino Uno, Mega, Leonardo, Yun, Duemillanova and clones (Freeduino, etc)
-#include <SoftwareSerial.h>  // This is nice and flexible but only supported on AVR architecture, other boards need to use Serial1
-#elif defined ARDUINO_ARCH_SAM // Arduino Due
-// Will use Serial1 later
-#elif defined __ARDUINO_X86__  // Intel Edison, Intel Galileo
-// Will user Serial1 later
-#elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
-// Will user Serial1 later
-#else                          // Old versions of the Arduino IDE that doesn't have ARCH destinctions yet.
-#include <SoftwareSerial.h>  
-#define ARDUINO_ARCH_AVR      // Assume AVR
-#endif
-
 String response="";
 int curchar;
 int baudrate=9600; // Good for most. Old Arduino UNO's might work more stable with 4800.
