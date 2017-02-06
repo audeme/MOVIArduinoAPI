@@ -36,7 +36,11 @@ int curchar;
 int baudrate=9600; // Good for most. Old Arduino UNO's might work more stable with 4800.
 
 #ifdef ARDUINO_ARCH_AVR
+#include <SoftwareSerial.h>
 SoftwareSerial mySerial(10,11); // Use default configuration for AVR (optional: you can rewire and change pins here)
+#elif defined ARDUINO_ARCH_PIC32
+#include <SoftwareSerial.h>
+SoftwareSerial mySerial(10,11); // Use configuration like AVR (optional: you can rewire and change pins here)
 #else
 #define mySerial Serial1       // Use Serial1 for non-AVR boards.
 #endif
