@@ -39,7 +39,7 @@
 #elif defined __ARDUINO_X86__  // Intel Edison, Intel Galileo
 // Will user Serial1 later
 #elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
-#error Arduino Zero, Zero Pro, M0 and M0 Pro do not have Serial1 or SoftwareSerial.
+// Will user Serial1 later
 #else                          // Old versions of the Arduino IDE that doesn't have ARCH destinctions yet.
 #include <SoftwareSerial.h>  
 #define ARDUINO_ARCH_AVR      // Assume AVR
