@@ -27,3 +27,7 @@ More examples
 #Version 1.11
 Play() command with Flash memory parameter
 Arduino Zero (SAMD architectures) now enabled
+
+#Version 1.12
+Workaround for firmware not stopping an ask, pause, play or password command at init
+Support for ARDUINO_ARCH_PIC32 (MicroShip UC32 board and others) 

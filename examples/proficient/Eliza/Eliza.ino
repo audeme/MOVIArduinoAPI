@@ -29,7 +29,7 @@
 
 #ifdef ARDUINO_ARCH_AVR 
 #include <SoftwareSerial.h> // This is nice and flexible but only supported on AVR architecture, other boards need to use Serial1 
-#include <avr/pgmspace.h>
+#include <avr/pgmspace.h>  // This will only work on AVR
 #endif
 
 MOVI recognizer(true);      // Get a MOVI object, true enables serial monitor interface, rx and tx for alternate communication pins on AVR architecture boards

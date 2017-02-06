@@ -58,8 +58,8 @@
 
 #include "MOVIShield.h"     // Include MOVI library, needs to be *before* the next #include
 
-#ifdef ARDUINO_ARCH_AVR 
-#include <SoftwareSerial.h> // This is nice and flexible but only supported on AVR architecture, other boards need to use Serial1 
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_PIC32)
+#include <SoftwareSerial.h> // This is nice and flexible but only supported on AVR and PIC32 architecture, other boards need to use Serial1 
 #endif
 
 // #define CHEATING // Define cheating if you want well-defined locations for player, wumpus, pits and bats that are printed on the serial monitor. Useful for debugging.

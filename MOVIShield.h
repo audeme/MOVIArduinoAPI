@@ -21,12 +21,19 @@
 // Will user Serial1 later
 #elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
 // Will user Serial1 later
+#elif defined ARDUINO_ARCH_PIC32
+// Treat like AVR
+#include <SoftwareSerial.h>  
 #else                          // Old versions of the Arduino IDE that doesn't have ARCH destinctions yet.
 #include <SoftwareSerial.h>  
 #define ARDUINO_ARCH_AVR      // Assume AVR
 #endif
 
 #include "Arduino.h"
+
+#ifndef API_VERSION
+#define API_VERSION 1.12f
+#endif
 
 #ifndef ARDUINO_RX_PIN
 #define ARDUINO_RX_PIN 10  //  Arduino RX pin (default 10) needs to be connected to MOVI TX PIN
@@ -38,17 +45,8 @@
 
 #ifndef ARDUINO_BAUDRATE
 #define ARDUINO_BAUDRATE 9600  // Communication rate between MOVI and Arduino. 9600bps is max for software serial ports.
-#endif                         // As of firmware 1.1 changing the bitrate is possible with a config file on the SDcard but
-                               // then HardwareSerial must be used and initialized before constructing MOVI.
-
-#ifndef SYNTH_ESPEAK
-#define SYNTH_ESPEAK 0  //  Constant for setSynthesizer method
-#endif
-
-#ifndef SYNTH_PICO
-#define SYNTH_PICO 1  //  Constant for setSynthesizer method
-#endif
-
+#endif                         // As of firmware 1.10 changing the bitrate is possible with a config file on the SDcard but
+                               // then HardwareSerial must be used and initialized before constructing MOVI
 
 // --- MOVI events ---
 
@@ -110,8 +108,12 @@
 #define FEMALE_VOICE true
 #endif
 
-#ifndef API_VERSION
-#define API_VERSION 1.11f
+#ifndef SYNTH_ESPEAK
+#define SYNTH_ESPEAK 0  //  Constant for setSynthesizer method
+#endif
+
+#ifndef SYNTH_PICO
+#define SYNTH_PICO 1  //  Constant for setSynthesizer method
 #endif
 
 class MOVI

@@ -24,8 +24,12 @@
 #include <SoftwareSerial.h>
 #endif
 
+#ifdef ARDUINO_ARCH_PIC32
+#include <SoftwareSerial.h>
+#endif
+
 #ifndef F // check to see if F() macro is missing -- should not be triggered but...
-#error MOVI 1.1 requires the F() macro.
+#error MOVI 1.10 and higher requires the F() macro.
 #endif
 
 // This is a workaround to not have the MOVI API give warning messages about the use of the F() function.
@@ -61,7 +65,9 @@ MOVI::MOVI(bool debugonoff)
 MOVI::MOVI(bool debugonoff, int rx, int tx)
 {
     #ifndef ARDUINO_ARCH_AVR
-    #warning rx and tx parameters only supported in AVR architecture. Using Serial1 hardwired. 
+    	#ifndef ARDUINO_ARCH_PIC32 
+    		#warning rx and tx parameters only supported on AVR and PIC32 architecture. Using Serial1 hardwired. 
+    	#endif
     #endif
     usehardwareserial=false;
     construct(rx, tx, debugonoff);
@@ -86,7 +92,7 @@ void inline MOVI::construct(int rx, int tx, bool debugonoff)
     firstsentence=true;
     callsigntrainok=true;
     
-    #ifdef ARDUINO_ARCH_AVR
+    #if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_PIC32)
         if (!usehardwareserial) {
             mySerial=new SoftwareSerial(rx, tx);
         }
@@ -121,8 +127,10 @@ void MOVI::init(bool waitformovi)
         ((TTYUARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
 		((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+#elif defined ARDUINO_ARCH_PIC32
+		if (!usehardwareserial) ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #else
-   #error This version of the MOVI library only supports boards with an AVR, SAM, SAMD or Intel processor.
+   #error This version of the MOVI library only supports boards with an AVR, SAM, SAMD, PIC32 or Intel processor.
 #endif
 
         shieldinit=1;
@@ -144,7 +152,7 @@ void MOVI::init(bool waitformovi)
         char carray[ver.length() + 1];
         ver.toCharArray(carray, sizeof(carray));
         firmwareversion = atof(carray);
-        #else                 // AVR, SAM
+        #else                 // AVR, SAM, SAMD, PIC32
         firmwareversion=atof(ver.c_str());
         #endif
         s=sresponse.indexOf("@");
@@ -153,9 +161,13 @@ void MOVI::init(bool waitformovi)
         char c2array[ver.length() + 1];
         ver.toCharArray(c2array, sizeof(c2array));
         hardwareversion = atof(c2array);
-        #else                    // AVR, Sam
+        #else                    // AVR, Sam, PIC32, SAMD
         hardwareversion=atof(ver.c_str());
         #endif
+    }
+    if (firmwareversion>=1.10) {  // Interrupt a previous play, pause, password, or ask command.
+    	sendCommand(F("ABORT"),F(""),"]");
+    	sendCommand(F("FINISH"),F(""),"]");
     }
 }
 

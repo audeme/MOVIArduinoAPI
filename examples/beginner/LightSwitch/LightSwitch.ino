@@ -29,8 +29,8 @@
 
 #include "MOVIShield.h"     // Include MOVI library, needs to be *before* the next #include
 
-#ifdef ARDUINO_ARCH_AVR 
-#include <SoftwareSerial.h> // This is nice and flexible but only supported on AVR architecture, other boards need to use Serial1 
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_PIC32)
+#include <SoftwareSerial.h> // This is nice and flexible but only supported on AVR and PIC32 architecture, other boards need to use Serial1 
 #endif
 
 const int led = 13;
