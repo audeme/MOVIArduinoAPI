@@ -116,7 +116,7 @@ void MOVI::init(bool waitformovi)
             Serial.begin(ARDUINO_BAUDRATE);
             while (!Serial) {
                 ; // wait for serial port to connect. Needed for Leonardo only.
-           }
+            }
         }
        
 #ifdef ARDUINO_ARCH_AVR
@@ -133,10 +133,16 @@ void MOVI::init(bool waitformovi)
    #error This version of the MOVI library only supports boards with an AVR, SAM, SAMD, PIC32 or Intel processor.
 #endif
 
+        while (!mySerial) {
+            ; // wait for serial port to connect. Needed for Leonardo only.
+        }
+        
         shieldinit=1;
         while (waitformovi && !isReady()) {
             delay(10);
         }
+ 
+
         String sresponse="";
         do {
             mySerial->println(F("INIT"));
@@ -164,10 +170,6 @@ void MOVI::init(bool waitformovi)
         #else                    // AVR, Sam, PIC32, SAMD
         hardwareversion=atof(ver.c_str());
         #endif
-    }
-    if (firmwareversion>=1.10) {  // Interrupt a previous play, pause, password, or ask command.
-    	sendCommand(F("ABORT"),F(""),"]");
-    	sendCommand(F("FINISH"),F(""),"]");
     }
 }
 
@@ -239,6 +241,7 @@ String MOVI::getShieldResponse()
         return "";
     }
     while (shieldinit>0) {
+        mySerial->flush();
         while (mySerial->available()) {
             curchar=mySerial->read();
             if (curchar=='\n') {

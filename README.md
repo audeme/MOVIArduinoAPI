@@ -31,3 +31,6 @@ Arduino Zero (SAMD architectures) now enabled
 #Version 1.12
 Workaround for firmware not stopping an ask, pause, play or password command at init
 Support for ARDUINO_ARCH_PIC32 (MicroShip UC32 board and others) 
+
+#Version 1.13
+Undid workaround as it makes the training less stable. Also workaround not necessary.
