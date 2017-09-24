@@ -34,3 +34,6 @@ Support for ARDUINO_ARCH_PIC32 (MicroShip UC32 board and others)
 
 #Version 1.13
 Undid workaround as it makes the training less stable. Also workaround not necessary.
+
+#Version 1.1.13
+Version 1.1.13 is identical to 1.13. But from now on versioning changes to major.minor.patch to be compatible with Arduino IDE.
