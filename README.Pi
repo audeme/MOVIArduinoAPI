@@ -50,6 +50,6 @@ One more thing. The digital GPIOs are mapped in the following way:
 // Pi Pins:                           10  8   7  11  12  13  15  16  18  22  29 31 32  33 
 // Caution: Don't use pins D1 and D2 as they are UART RX/TX and are being used for communication with MOVI. 
 
-An LED on PIN 13 therefore goes to Raspberry PI 3 pins 33 and 39. An LED on PIN 12 (see password example) goes to pins 32 and 39.
+An LED on Arduino pin D13 therefore goes to Raspberry PI 3 pins 33 and 39 (GND). An LED on Arduino pin D12 (see password example) goes to pins 32 and 39 (GND).
 
 Have Fun!
