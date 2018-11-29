@@ -92,4 +92,4 @@ PlaySounds: $(OBJ)
 
 clean:
 	rm -f piduino_light/*.o *.o core
-	rm -f `find examples/ -name "*" -not -name "*.ino" -print`
+	rm -f `find examples/ -name "*" -not -type d -not -name "*.ino" -print`
