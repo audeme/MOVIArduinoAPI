@@ -91,6 +91,100 @@ const String *SentenceSets[] = {
 int activeset=0;              // Stores the currenlty active set.
 String phonenumber="";        // Stores the phone number.
 
+
+/*********** HELPER FUNCTIONS ********************/
+
+/*
+ * This function returns a single string that is separated by a space at a given index. 
+ */
+String getword(String str, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = str.length()-1;
+  char separator = ' ';
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(str.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+  return found>index ? str.substring(strIndex[0], strIndex[1]) : "";
+}
+
+
+/*
+ * This function calculates the Levenshtein, or edit-distance, counting the number of insertions, deletions, and substitutions needed to go from string s1 to string s2.
+ * More information about the function can be found here: https://en.wikipedia.org/wiki/Levenshtein_distance
+ * This particular implementation is optimized to use O(min(m,n)) space instead of O(mn) as memory on the Arduino is scarce. 
+ * More information on this function can be found from the original source it was adopted from: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance
+ */
+ 
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+
+int levenshtein(String s1, String s2) {
+    unsigned int s1len, s2len, x, y, lastdiag, olddiag;
+    s1len=s1.length();
+    s2len=s2.length();
+    unsigned int column[s1len+1];
+    for (y = 1; y <= s1len; y++)
+        column[y] = y;
+    for (x = 1; x <= s2len; x++) {
+        column[0] = x;
+        for (y = 1, lastdiag = x-1; y <= s1len; y++) {
+            olddiag = column[y];
+            column[y] = MIN3(column[y] + 1, column[y-1] + 1, lastdiag + (s1[y-1] == s2[x-1] ? 0 : 1));
+            lastdiag = olddiag;
+        }
+    }
+    return(column[s1len]);
+}
+
+/*
+ * The following function uses the Levenshtein distance to match a given sentence against a result set.
+ * The minimum distance wins. If there's more than one minimum, the first minimum wins. 
+ * This is where an ambiguity detector and/or a threshold could be implemented to force increased robustness.
+ * The Levenshtein distance is a common metric in the speech recognition community for this kind of task. 
+ */
+int matchsentence(int setno, String result)
+{
+  int matchscore=30000; // unachievably high number
+  int matchindex=0;
+  const String *sentences=SentenceSets[setno]; // chose the sentences from the set
+  
+  for (int i=0;i<setsizes[setno];i++) {  // Find the minimally distant sentence.
+    int score=levenshtein(sentences[i],result);
+    if (score<matchscore) {
+        matchscore=score;
+        matchindex=i;
+    }
+  }
+  return matchindex; 
+}
+
+/*
+ * This function uses matchsentence() to replace each word in the given raw result string with the closest match in a sentence set, thereby returning a corrected result. 
+ */
+String correctwords(int setno, String rawresult)
+{
+    int index=0;
+    String oneword;
+    String matchedstring="";
+    const String *sentences=SentenceSets[setno]; // chose the sentences from the set
+    
+    do {                                  // this loop  
+      oneword=getword(rawresult,index);  // extracts each word
+      if (oneword!="") {
+          int res=matchsentence(setno,oneword);  /// and then matches it
+          matchedstring=matchedstring+sentences[res]+" ";  // the matching result is then added to the string, thereby correcting whatever input was with the closest match
+      }
+      index++;  
+    } while (oneword!="");   // until no words are left in the input
+    return matchedstring;    // return the result
+}
+
+
 void setup()  
 {
    recognizer.init();         // Initialize MOVI (waits for it to boot)
@@ -173,96 +267,3 @@ void loop() // run over and over
     }
   }    
 }
-
-/*
- * The following function uses the Levenshtein distance to match a given sentence against a result set.
- * The minimum distance wins. If there's more than one minimum, the first minimum wins. 
- * This is where an ambiguity detector and/or a threshold could be implemented to force increased robustness.
- * The Levenshtein distance is a common metric in the speech recognition community for this kind of task. 
- */
-int matchsentence(int setno, String result)
-{
-  int matchscore=30000; // unachievably high number
-  int matchindex=0;
-  const String *sentences=SentenceSets[setno]; // chose the sentences from the set
-  
-  for (int i=0;i<setsizes[setno];i++) {  // Find the minimally distant sentence.
-    int score=levenshtein(sentences[i],result);
-    if (score<matchscore) {
-        matchscore=score;
-        matchindex=i;
-    }
-  }
-  return matchindex; 
-}
-
-/*
- * This function uses matchsentence() to replace each word in the given raw result string with the closest match in a sentence set, thereby returning a corrected result. 
- */
-String correctwords(int setno, String rawresult)
-{
-    int index=0;
-    String oneword;
-    String matchedstring="";
-    const String *sentences=SentenceSets[setno]; // chose the sentences from the set
-    
-    do {                                  // this loop  
-      oneword=getword(rawresult,index);  // extracts each word
-      if (oneword!="") {
-          int res=matchsentence(setno,oneword);  /// and then matches it
-          matchedstring=matchedstring+sentences[res]+" ";  // the matching result is then added to the string, thereby correcting whatever input was with the closest match
-      }
-      index++;  
-    } while (oneword!="");   // until no words are left in the input
-    return matchedstring;    // return the result
-}
-
-/*********** HELPER FUNCTIONS ********************/
-
-/*
- * This function returns a single string that is separated by a space at a given index. 
- */
-String getword(String str, int index)
-{
-  int found = 0;
-  int strIndex[] = {0, -1};
-  int maxIndex = str.length()-1;
-  char separator = ' ';
-  for(int i=0; i<=maxIndex && found<=index; i++){
-    if(str.charAt(i)==separator || i==maxIndex){
-        found++;
-        strIndex[0] = strIndex[1]+1;
-        strIndex[1] = (i == maxIndex) ? i+1 : i;
-    }
-  }
-  return found>index ? str.substring(strIndex[0], strIndex[1]) : "";
-}
-
-
-/*
- * This function calculates the Levenshtein, or edit-distance, counting the number of insertions, deletions, and substitutions needed to go from string s1 to string s2.
- * More information about the function can be found here: https://en.wikipedia.org/wiki/Levenshtein_distance
- * This particular implementation is optimized to use O(min(m,n)) space instead of O(mn) as memory on the Arduino is scarce. 
- * More information on this function can be found from the original source it was adopted from: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance
- */
- 
-#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
-
-int levenshtein(String s1, String s2) {
-    unsigned int s1len, s2len, x, y, lastdiag, olddiag;
-    s1len=s1.length();
-    s2len=s2.length();
-    unsigned int column[s1len+1];
-    for (y = 1; y <= s1len; y++)
-        column[y] = y;
-    for (x = 1; x <= s2len; x++) {
-        column[0] = x;
-        for (y = 1, lastdiag = x-1; y <= s1len; y++) {
-            olddiag = column[y];
-            column[y] = MIN3(column[y] + 1, column[y-1] + 1, lastdiag + (s1[y-1] == s2[x-1] ? 0 : 1));
-            lastdiag = olddiag;
-        }
-    }
-    return(column[s1len]);
-}
-

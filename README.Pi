@@ -1,0 +1,47 @@
+Getting MOVI to work on a Raspberry PI 3
+========================================
+
+1) Connect MOVI onto Raspberry Pi using adapter the Adapter sold by Audeme or the wiring scheme in this Instructable:
+https://www.instructables.com/id/Untethered-Speech-Dialog-Using-MOVI-With-the-Rasbe/
+
+Beware that some steps have changed. This README presents an update.
+
+Connect the Raspberry PI to a power supply with at least 2 Amperes. If the power supply has not enough power, the Raspberry PI will complain "Undervoltage detected" and show a "Lightning bolt" in the upper right corner.
+
+2) Download latest Raspbian:
+https://www.raspberrypi.org/downloads/raspbian/
+
+Install on SDCard, start Raspberry PI, follow steps including updating process. 
+
+2) Start a terminal and edit /boot/config.txt, for example: 
+
+sudo nano /boot/config.txt
+
+Add the following lines to the end of the file:
+
+dtoverlay=pi3-miniuart-bt 
+core_freq=250
+enable_uart=1
+
+4) Now edit /boot/cmdline.txt
+
+sudo nano /boot/cmdline.txt
+
+remove the word phrase "console=serial0,115200" or "console=ttyAMA0,115200"
+
+5) Reboot the Raspberry PI.
+
+6) Find out which devices files exist now. This seems to be dynamic. 
+For me: /dev/serial0 is the one that MOVI responds to. /dev/ttyS0 or /dev/serial1 give an input/output error. The easiest way to find out is to do an:
+stty -a -F <devicefile> 
+where devicefile is one of  /dev/ttyAMA0, /dev/serial0, /dev/ttyS0, or /dev/serial1. The one with the lowest number that doesn't return an error should be used.
+
+7) Type "Make" and wait for the examples to compile. The examples are the same as in the Arduino version.
+
+8) Browse through the examples directory. The .ino files contain the C++ source code and the executables run just like the Arduino versions.
+If your communication device is not /dev/serial0 you can pass an alternative device as first command line parameter. For example:
+/examples/beginner/LightSwitch/LightSwitch /dev/serial1
+
+We highly recommend browsing the source codes and playing around with them as this is the best way to learn MOVI. We are also working on a Python version that does not require the Piduino environment.
+
+Have Fun!

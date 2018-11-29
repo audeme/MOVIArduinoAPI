@@ -134,6 +134,97 @@ void (*state)() = NULL;
 // The state that the game was in prior to the current state.
 void (*last_state)() = NULL;
 
+#ifdef RASPBERRYPI
+// forward declare game states
+void begin_splash_screen();
+void start_game();
+void gamestatus();
+void enter_new_room();
+void game_over_delay();
+void game_over_pit();
+void game_over_wumpus();
+void game_over_arrow();
+void game_over_win();
+void begin_move_room();
+void begin_shooting_arrow();
+void begin_bat_move();
+void end_bat_move();
+void begin_input_move();
+void arrow_missed();
+void animate_shooting_arrow();
+void animate_bat_move();
+#endif
+
+
+// MOVI helper function to convert number words as returned by MOVI to actual numbers.
+int moviResult2Number(String string)
+{
+  if (string.indexOf("ZERO")>-1) {
+    return 0;
+  }
+  if (string.indexOf("TEN")>-1) {
+    return 10;
+  }
+  if (string.indexOf("ELEVEN")>-1) {
+    return 11;
+  }
+  if (string.indexOf("TWELVE")>-1) {
+    return 12;
+  }
+  if (string.indexOf("THIRTEEN")>-1) {
+    return 13;
+  }
+  if (string.indexOf("FOURTEEN")>-1) {
+    return 14;
+  }
+  if (string.indexOf("FIFTEEN")>-1) {
+    return 15;
+  }
+  if (string.indexOf("SIXTEEN")>-1) {
+    return 16;
+  }
+  if (string.indexOf("SEVENTEEN")>-1) {
+    return 17;
+  }
+  if (string.indexOf("EIGHTEEN")>-1) {
+    return 18;
+  }
+  if (string.indexOf("NINETEEN")>-1) {
+    return 19;
+  }
+  if (string.indexOf("TWENTY")>-1) {
+    return 20;
+  }
+  if (string.indexOf("ONE")>-1) {
+    return 1;
+  }
+  if (string.indexOf("TWO")>-1) {
+    return 2;
+  }
+  if (string.indexOf("THREE")>-1) {
+    return 3;
+  }
+  if (string.indexOf("FOUR")>-1) {
+    return 4;
+  }
+  if (string.indexOf("FIVE")>-1) {
+    return 5;
+  }
+  if (string.indexOf("SIX")>-1) {
+    return 6;
+  }
+  if (string.indexOf("SEVEN")>-1) {
+    return 7;
+  }
+  if (string.indexOf("EIGHT")>-1) {
+    return 8;
+  }
+  if (string.indexOf("NINE")>-1) {
+    return 9;
+  }
+  return -1; 
+}
+
 
 // Perform one time setup for the game and put the game in the splash screen state.
 void setup() 
@@ -237,75 +328,6 @@ void loop()
     last_state = state;
     state();
   }
-}
-
-// MOVI helper function to convert number words as returned by MOVI to actual numbers.
-int moviResult2Number(String string)
-{
-  if (string.indexOf("ZERO")>-1) {
-    return 0;
-  }
-  if (string.indexOf("TEN")>-1) {
-    return 10;
-  }
-  if (string.indexOf("ELEVEN")>-1) {
-    return 11;
-  }
-  if (string.indexOf("TWELVE")>-1) {
-    return 12;
-  }
-  if (string.indexOf("THIRTEEN")>-1) {
-    return 13;
-  }
-  if (string.indexOf("FOURTEEN")>-1) {
-    return 14;
-  }
-  if (string.indexOf("FIFTEEN")>-1) {
-    return 15;
-  }
-  if (string.indexOf("SIXTEEN")>-1) {
-    return 16;
-  }
-  if (string.indexOf("SEVENTEEN")>-1) {
-    return 17;
-  }
-  if (string.indexOf("EIGHTEEN")>-1) {
-    return 18;
-  }
-  if (string.indexOf("NINETEEN")>-1) {
-    return 19;
-  }
-  if (string.indexOf("TWENTY")>-1) {
-    return 20;
-  }
-  if (string.indexOf("ONE")>-1) {
-    return 1;
-  }
-  if (string.indexOf("TWO")>-1) {
-    return 2;
-  }
-  if (string.indexOf("THREE")>-1) {
-    return 3;
-  }
-  if (string.indexOf("FOUR")>-1) {
-    return 4;
-  }
-  if (string.indexOf("FIVE")>-1) {
-    return 5;
-  }
-  if (string.indexOf("SIX")>-1) {
-    return 6;
-  }
-  if (string.indexOf("SEVEN")>-1) {
-    return 7;
-  }
-  if (string.indexOf("EIGHT")>-1) {
-    return 8;
-  }
-  if (string.indexOf("NINE")>-1) {
-    return 9;
-  }
-  return -1; 
 }
 
 // -------------------------------------------------------------------------------

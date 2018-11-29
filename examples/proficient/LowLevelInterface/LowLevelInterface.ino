@@ -31,6 +31,11 @@
  * 
  */
 
+#ifdef RASPBERRYPI
+#include "Arduino.h"
+#include "HardwareSerial.h"
+#endif
+
 String response="";
 int curchar;
 int baudrate=9600; // Good for most. Old Arduino UNO's might work more stable with 4800.

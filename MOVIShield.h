@@ -23,7 +23,8 @@
 // Will user Serial1 later
 #elif defined ARDUINO_ARCH_PIC32
 // Treat like AVR
-#include <SoftwareSerial.h>  
+#include <SoftwareSerial.h>
+#elif defined RASPBERRYPI
 #else                          // Old versions of the Arduino IDE that doesn't have ARCH destinctions yet.
 #include <SoftwareSerial.h>  
 #define ARDUINO_ARCH_AVR      // Assume AVR
@@ -32,7 +33,7 @@
 #include "Arduino.h"
 
 #ifndef API_VERSION
-#define API_VERSION 1.12f
+#define API_VERSION 1.20f
 #endif
 
 #ifndef ARDUINO_RX_PIN
@@ -255,6 +256,9 @@ public:
     
     // Sends a command manually to MOVI, with arguments.
     void sendCommand(String command, String parameter);
+
+    // Sends a command manually to MOVI, whitout argument. Flash memory version for AVR
+    void sendCommand(const __FlashStringHelper* command);
     
     // Sends a command manually to MOVI. Flash memory version for AVR
     void sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter);
@@ -304,7 +308,6 @@ private:
     bool sendCommand(String command, String parameter, String okresponse); // sends a command and listens to responses. Only works before poll().
 
     // Sends a command manually to MOVI. Flash memory version for AVR
-    void sendCommand(const __FlashStringHelper* command);
     bool sendCommand(const __FlashStringHelper* command, const __FlashStringHelper* parameter, String okresponse);
 };
 

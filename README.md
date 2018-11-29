@@ -37,3 +37,6 @@ Undid workaround as it makes the training less stable. Also workaround not neces
 
 #Version 1.1.13
 Version 1.1.13 is identical to 1.13. But from now on versioning changes to major.minor.patch to be compatible with Arduino IDE.
+
+#Version 1.2.0
+Added Raspberry PI support. Added BattleShip game from MOVI instructable.

@@ -14,6 +14,9 @@
 
 #if defined(ARDUINO) && ARDUINO >=100
 #include <Arduino.h>
+#elif defined RASPBERRYPI
+#include "Arduino.h"
+#include "HardwareSerial.h"
 #else
 #include <WProgram.h>
 #include <avr/pgmspace.h>
@@ -126,9 +129,11 @@ void MOVI::init(bool waitformovi)
 #elif defined __ARDUINO_X86__    // Intel Edison, etc.
         ((TTYUARTClass *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined ARDUINO_ARCH_SAMD  // Arduino Zero, Zero Pro, M0 and M0 Pro
-		((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+	((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #elif defined ARDUINO_ARCH_PIC32
-		if (!usehardwareserial) ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+	if (!usehardwareserial) ((SoftwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
+#elif defined RASPBERRYPI
+	((HardwareSerial *)mySerial)->begin(ARDUINO_BAUDRATE);
 #else
    #error This version of the MOVI library only supports boards with an AVR, SAM, SAMD, PIC32 or Intel processor.
 #endif

@@ -28,6 +28,14 @@
 
 MOVI recognizer(true);            // Get a MOVI object, true enables serial monitor interface, rx and tx can be passed as parameters for alternate communication pins on AVR architecture
 
+// Helper function that works across Arduino platforms that converts float to String
+String float2string(float f, int places)
+{
+  int beforepoint=(int) f;
+  int afterpoint=(f-beforepoint)*pow(10,places);
+  return String(beforepoint)+"."+String(afterpoint);
+}
+
 void setup()  
 {
   recognizer.init();      // Initialize MOVI (waits for it to boot)
@@ -35,14 +43,6 @@ void setup()
   recognizer.say("MOHVEE's firmware is version "+float2string(recognizer.getFirmwareVersion(),1));
   recognizer.say("MOHVEE's Arduino library is version "+float2string(recognizer.getAPIVersion(),2));
   recognizer.say("MOHVEE's hardware is version "+float2string(recognizer.getHardwareVersion(),1)); 
-}
-
-// Helper function that works across Arduino platforms that converts float to String
-String float2string(float f, int places)
-{
-  int beforepoint=(int) f;
-  int afterpoint=(f-beforepoint)*pow(10,places);
-  return String(beforepoint)+"."+String(afterpoint);
 }
 
 void loop() // run over and over
