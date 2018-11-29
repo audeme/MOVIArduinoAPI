@@ -19,7 +19,7 @@ sudo nano /boot/config.txt
 
 Add the following lines to the end of the file:
 
-dtoverlay=pi3-miniuart-bt 
+dtoverlay=pi3-disable-bt 
 core_freq=250
 enable_uart=1
 
