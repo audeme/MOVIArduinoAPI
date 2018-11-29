@@ -26,9 +26,17 @@
 #define Arduino_h
 
 #include <math.h>
-#include "bcm2835_registers.h"
-#include "pgmspace.h"
+#include <stdint.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <time.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <string.h>
 
+#include "pgmspace.h"
 
 
 #ifdef __cplusplus
