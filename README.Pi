@@ -13,7 +13,7 @@ https://www.raspberrypi.org/downloads/raspbian/
 
 Install on SDCard, start Raspberry PI, follow steps including updating process. 
 
-2) Start a terminal and edit /boot/config.txt, for example: 
+3) Start a terminal and edit /boot/config.txt, for example: 
 
 sudo nano /boot/config.txt
 
@@ -42,9 +42,14 @@ where devicefile is one of  /dev/ttyAMA0, /dev/serial0, /dev/ttyS0, or /dev/seri
 If your communication device is not /dev/serial0 you can pass an alternative device as first command line parameter. For example:
 /examples/beginner/LightSwitch/LightSwitch /dev/serial1
 
-We highly recommend browsing the source codes and playing around with them as this is the best way to learn MOVI. We are also working on a Python version that does not require the Piduino environment.
+We highly recommend browsing the source codes and playing around with them as this is the best way to learn MOVI. We are also working on a Python version that does not require the Piduino core.
 
-One more thing. The digital GPIOs are mapped in the following way:
+Have fun!
+
+APPENDIX
+
+A) GPIO Mappings
+The digital GPIOs are mapped in the following way:
 // Arduino Digital PIN to Raspberry PI GPIO mappping. This can be changed in Arduino.h
 // Arduino Pins:                      D0  D1  D2 D3 D4  D5  D6  D7  D8  D9  D10 D11 D12 D13 
 // Pi Pins:                           10  8   7  11  12  13  15  16  18  22  29 31 32  33 
@@ -52,4 +57,20 @@ One more thing. The digital GPIOs are mapped in the following way:
 
 An LED on Arduino pin D13 therefore goes to Raspberry PI 3 pins 33 and 39 (GND). An LED on Arduino pin D12 (see password example) goes to pins 32 and 39 (GND).
 
-Have Fun!
+The analog and PWM GPIOs are not yet supported. Check the piduino_light/sysfsio.cpp file for more information.
+
+B) Compiling your own programs
+The "make" command creates two libraries: libpiduino and libmovi. Libpiduino implements the Arduino core and libmovi implements the MOVI library based on some Arduino core. You will need libmovi and some Arduino core to compile your own MOVI programs. Btq. you are free to use libpiduino without MOVI if you are just interested in programming some Arduino sketches on the Raspberry PI.
+1) Compiling Arduino sketches without MOVI library
+Use: 
+g++ -o output -Ipiduino_light -xc++ input/input.ino -Lpiduino_light -lpiduino
+
+where output is your desired output program and input is your Arduino sketch.
+
+2) Compiling Arduino sketches with MOVI library
+Use:
+g++ -o output -DRASPBERRYPI -I. -Ipiduino_light -xc++ input/input.ino -L. -Lpiduino_light -lmovi -lpiduino
+where output is your desired output program and input is your Arduino sketch.
+
+3) Extending Arduino sketches into "real" Raspberry Pi code
+There is nothing stopping you from including Raspberry Pi specific include files and compiling against libraries installed in your system. If you feel you want your own main() method, then it's best to modify the piduinowrappter.cpp file. Also, renaming the .ino file into .cpp allows to remove the -xc++ flag.

@@ -1,95 +1,115 @@
 #
 # Build MOVI Arduino Voice Dialog Shield Library for Raspberry PI
 #
-# Copyright (c) 20108 by Gerald Friedland. fractor@audeme.com
+# Copyright (c) 2018 by Gerald Friedland. fractor@audeme.com
 
 CXX=g++
+ARDUINODIR=piduino_light
 CFLAGS=-DRASPBERRYPI -Wall -pedantic -I. -Ipiduino_light
-DEPS = MOVIShield.h
-OBJ = piduino_light/Arduino.o piduino_light/piduinowrapper.o piduino_light/sysfsio.o piduino_light/HardwareSerial.o  piduino_light/Print.o piduino_light/WMath.o piduino_light/IPAddress.o piduino_light/stdlib_noniso.o piduino_light/WString.o MOVIShield.o
+LIBFLAGS=-L. -lmovi -lpiduino
+LIBS = libmovi.a libpiduino.a
+OBJ = MOVIShield.o
 
-%.o: %.cpp $(DEPS)
-	$(CXX) -c -o $@ $< $(CFLAGS)
+all: libpiduino.a libmovi.a examples
 
-all: LightSwitch LightSwitch2 LightSwitch3 SynthesizerControl WordCount WordSequence1 WordSequence2 WordSpotter WordSpotter2 BeepsOff ElizaKickstarter NestedDialog Password YesSir BattleShip Eliza HuntTheWumpus LowLevelInterface SentenceSets SerialMonitor SimpleDebug VersionCheck LightSwitch_MX LightSwitch_DE PlaySounds
+libpiduino.a: 
+	@$(MAKE) -C $(ARDUINODIR)
+	ln -s piduino_light/libpiduino.a libpiduino.a
 
-LightSwitch: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+libmovi.a: $(OBJ) libpiduino.a
+	ar rvs libmovi.a $(OBJ) libpiduino.a
+	ranlib libmovi.a
 
-LightSwitch2: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+%.o: %.cpp
+	$(CXX) $(CFLAGS) -c -o $@ $< -L. -lpiduino
 
-LightSwitch3: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+examples: beginner intermediate proficient debug sd_hacks
+
+beginner: LightSwitch LightSwitch2 LightSwitch3 SynthesizerControl WordCount WordSequence1 WordSequence2 WordSpotter WordSpotter2
+intermediate: BeepsOff ElizaKickstarter NestedDialog Password YesSir 
+proficient: BattleShip Eliza HuntTheWumpus LowLevelInterface SentenceSets 
+debug: SerialMonitor SimpleDebug VersionCheck 
+sd_hacks: LightSwitch_MX LightSwitch_DE PlaySounds
+
+LowLevelInterface: libpiduino.a
+	$(CXX) -o examples/proficient/$@/$@ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino -L. -lpiduino
+
+LightSwitch: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
+
+LightSwitch2: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
+
+LightSwitch3: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 	
-SynthesizerControl: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+SynthesizerControl: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 	
-WordCount: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+WordCount: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 
-WordSequence1: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+WordSequence1: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 
-WordSequence2: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+WordSequence2: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 
-WordSpotter: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+WordSpotter: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 
-WordSpotter2: $(OBJ)
-	$(CXX) -o examples/beginner/$@/$@ $^ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino
+WordSpotter2: $(LIBS)
+	$(CXX) -o examples/beginner/$@/$@ $(CFLAGS) -xc++ examples/beginner/$@/$@.ino $(LIBFLAGS)
 
-BeepsOff: $(OBJ)
-	$(CXX) -o examples/intermediate/$@/$@ $^ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino
+BeepsOff: $(LIBS)
+	$(CXX) -o examples/intermediate/$@/$@ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino $(LIBFLAGS)
 
-ElizaKickstarter: $(OBJ)
-	$(CXX) -o examples/intermediate/$@/$@ $^ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino
+ElizaKickstarter: $(LIBS)
+	$(CXX) -o examples/intermediate/$@/$@ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino $(LIBFLAGS)
 	
-NestedDialog: $(OBJ)
-	$(CXX) -o examples/intermediate/$@/$@ $^ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino
+NestedDialog: $(LIBS)
+	$(CXX) -o examples/intermediate/$@/$@ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino $(LIBFLAGS)
+  
+Password: $(LIBS)
+	$(CXX) -o examples/intermediate/$@/$@ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino $(LIBFLAGS)
 
-Password: $(OBJ)
-	$(CXX) -o examples/intermediate/$@/$@ $^ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino
+YesSir: $(LIBS)
+	$(CXX) -o examples/intermediate/$@/$@ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino $(LIBFLAGS)	
 
-YesSir: $(OBJ)
-	$(CXX) -o examples/intermediate/$@/$@ $^ $(CFLAGS) -xc++ examples/intermediate/$@/$@.ino	
+BattleShip: $(LIBS)
+	$(CXX) -o examples/proficient/$@/$@ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino $(LIBFLAGS)
 
-BattleShip: $(OBJ)
-	$(CXX) -o examples/proficient/$@/$@ $^ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino
-
-Eliza: $(OBJ)
-	$(CXX) -o examples/proficient/$@/$@ $^ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino
+Eliza: $(LIBS)
+	$(CXX) -o examples/proficient/$@/$@ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino $(LIBFLAGS)
 	
-HuntTheWumpus: $(OBJ)
-	$(CXX) -o examples/proficient/$@/$@ $^ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino
+HuntTheWumpus: $(LIBS)
+	$(CXX) -o examples/proficient/$@/$@ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino $(LIBFLAGS)
 	
-LowLevelInterface: $(OBJ)
-	$(CXX) -o examples/proficient/$@/$@ $^ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino
+SentenceSets: $(LIBS)
+	$(CXX) -o examples/proficient/$@/$@ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino $(LIBFLAGS)
 
-SentenceSets: $(OBJ)
-	$(CXX) -o examples/proficient/$@/$@ $^ $(CFLAGS) -xc++ examples/proficient/$@/$@.ino
-
-SerialMonitor: $(OBJ)
-	$(CXX) -o examples/debug/$@/$@ $^ $(CFLAGS) -xc++ examples/debug/$@/$@.ino
+SerialMonitor: $(LIBS)
+	$(CXX) -o examples/debug/$@/$@ $(CFLAGS) -xc++ examples/debug/$@/$@.ino $(LIBFLAGS)
 	
-SimpleDebug: $(OBJ)
-	$(CXX) -o examples/debug/$@/$@ $^ $(CFLAGS) -xc++ examples/debug/$@/$@.ino
+SimpleDebug: $(LIBS)
+	$(CXX) -o examples/debug/$@/$@ $(CFLAGS) -xc++ examples/debug/$@/$@.ino $(LIBFLAGS)
 
-VersionCheck: $(OBJ)
-	$(CXX) -o examples/debug/$@/$@ $^ $(CFLAGS) -xc++ examples/debug/$@/$@.ino
+VersionCheck: $(LIBS)
+	$(CXX) -o examples/debug/$@/$@ $(CFLAGS) -xc++ examples/debug/$@/$@.ino $(LIBFLAGS)
 
-LightSwitch_MX: $(OBJ)
-	$(CXX) -o examples/sdcard_hacks/$@/$@ $^ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino
+LightSwitch_MX: $(LIBS)
+	$(CXX) -o examples/sdcard_hacks/$@/$@ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino $(LIBFLAGS)
 	
-LightSwitch_DE: $(OBJ)
-	$(CXX) -o examples/sdcard_hacks/$@/$@ $^ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino
+LightSwitch_DE: $(LIBS)
+	$(CXX) -o examples/sdcard_hacks/$@/$@ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino $(LIBFLAGS)
 
-PlaySounds: $(OBJ)
-	$(CXX) -o examples/sdcard_hacks/$@/$@ $^ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino
+PlaySounds: $(LIBS)
+	$(CXX) -o examples/sdcard_hacks/$@/$@ $(CFLAGS) -xc++ examples/sdcard_hacks/$@/$@.ino $(LIBFLAGS)
 
-.PHONY: clean
+clean: 
+	rm -f $(ARDUINODIR)/*.o *.o core 
 
-clean:
-	rm -f piduino_light/*.o *.o core
+distclean: clean
+	rm -f *.a
+	rm -f $(ARDUINODIR)/*.a
 	rm -f `find examples/ -name "*" -not -type d -not -name "*.ino" -print`

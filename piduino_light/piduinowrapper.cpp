@@ -1,6 +1,7 @@
 /*
-  piduinowrapper.cpp for use on Raspberry PI with the MOVI(TM) Arduino 
-  Speech Dialog Shield by Gerald Friedland at Audeme.com in 2018.
+  piduinowrapper.cpp Arduino Console for Raspberry PI.
+  Developed for use with the MOVI(TM) Arduino(R) Voice Dialog 
+  Shield by Gerald Friedland at Audeme.com in 2018.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,7 +20,6 @@
 
 #include "Arduino.h"
 #include "HardwareSerial.h"
-#include "MOVIShield.h"
 #include <stdio.h>
 
 HardwareSerial Serial;
