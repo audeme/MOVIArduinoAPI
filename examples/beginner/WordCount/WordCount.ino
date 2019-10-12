@@ -41,7 +41,7 @@ void setup()
   // Note: training can only be performed in setup(). 
   // The training functions are "lazy" and only do something if there are changes. 
   // They can be commented out to save memory and startup time once training has been performed.
-  recognizer.callSign("Arduino");
+  recognizer.callSign("Ciii2");
   recognizer.addSentence("ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE TEN"); // Sentence 1 -- but doesn't matter, we just need some vocabulary to test this with
   recognizer.train();                   // Train (may take a couple seconds)
   //*/
